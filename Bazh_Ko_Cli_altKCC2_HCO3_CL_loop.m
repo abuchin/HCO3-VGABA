@@ -9,8 +9,8 @@ Cli_max=30;
 HCO3_max=30;
 
 % variations
-dCli=1;     % mM
-dHCO3=1;    % mM
+dCli=10;     % mM
+dHCO3=10;    % mM
 
 % starting values
 HCO3i=0;    % mM
@@ -144,23 +144,23 @@ gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 
 %% INITIAL CONDITIONS (rest state, KCC2(+))
 
-Ko=3.45;             % mM
+Ko=3.46;             % mM
 %Cli=3.46;            % mM
 cai=0.00;            % mM
 Bs=499.92;           % mM
-VD=-65.43;           % mV
-VSOMA=-65.51;        % mV
-VGABA=-58.82;           % mV
+VD=-59.04;           % mV
+VSOMA=-59.07;        % mV
+VGABA=-77.43;           % mV
 m_iKv=0.00;       % 1
-m_iNa=0.01;       % 1
-h_iNa=0.84;       % 1
-m_iKm=0.01;       % 1
-m_iNaD=0.01;      % 1
-h_iNaD=0.84;      % 1
+m_iNa=0.03;       % 1
+h_iNa=0.65;       % 1
+m_iKm=0.03;       % 1
+m_iNaD=0.03;      % 1
+h_iNaD=0.65;      % 1
 m_iNapD=0.00;     % 1
 m_iKCa=0.00;      % 1
 m_iHVA=0.00;      % 1
-h_iHVA=0.58;      % 1
+h_iHVA=0.50;      % 1
 
 %% loop over time
 for i=1:1:round(T/dt)     
@@ -367,7 +367,7 @@ figure;
 
 imagesc(X,Y,VS);
 set(gca,'YDir','normal');
-title('Area under the curve (V/s)');
+title('Number of spikes after stimulation');
 colorbar;
 box off;
 
