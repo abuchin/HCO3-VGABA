@@ -108,9 +108,9 @@ alpha2_NMDA=0.05;         % kHz
 VNMDA=10;                 % mV
 
 
-gGABA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 2
-gAMPA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 3
-gNMDA_max=stimulation_gain*0.1;          % mS/cm^2
+gGABA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 0.5
+gAMPA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 0.5
+gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 
 
 % I=0;            % external input for VSOMA ~ -64 mV
