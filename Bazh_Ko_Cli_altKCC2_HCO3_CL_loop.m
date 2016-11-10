@@ -9,8 +9,8 @@ Cli_max=30;
 HCO3_max=30;
 
 % variations
-dCli=10;     % mM
-dHCO3=10;    % mM
+dCli=1;     % mM
+dHCO3=1;    % mM
 
 % starting values
 HCO3i=0;    % mM

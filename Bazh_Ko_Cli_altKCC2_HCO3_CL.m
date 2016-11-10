@@ -18,8 +18,8 @@ Hz_stim=100;  % stimulation intensity
 %% PY parameters
 
 % Variation parameters - PARAMETERS CHANGED!
-HCO3i=30;        % mM
-Cli=30;          % mM
+HCO3i=15;        % mM
+Cli=5;          % mM
 stimulation_gain=1;
 
 Mg=1;

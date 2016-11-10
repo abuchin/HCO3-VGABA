@@ -26,3 +26,20 @@ set(gca,'YDir','normal');
 box off
 colormap('jet');
 colorbar;
+
+%% VGABA and the number of spikes
+
+figure;
+
+% plot VGABA
+yyaxis left
+plot(1:20,VGABA(:,15),1:20,VGABA(:,30));
+xlabel('[Cl^-_i]')
+ylabel('E_{GABA} (mV)')
+
+% plot the spikes
+yyaxis right
+plot(1:20,VS(15,1:20),1:20,VS(30,1:20));
+ylabel('Spikes after HFS')
+
+%%
