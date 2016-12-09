@@ -14,17 +14,18 @@ t=(0:1:round(T/dt))*dt;
 
 %% Stimulus parameters
 Hz_stim=100;  % stimulation intensity
+%
 
 %% PY parameters
 
 % Variation parameters - PARAMETERS CHANGED!
+Cli=14;          % mM
 HCO3i=15;        % mM
-Cli=5;          % mM
 stimulation_gain=1;
 
 Mg=1;
 % CL
-Clo_E=130;        % mM
+Clo_E=250;        % mM
 Vhalf_E=40;       % KCC2 1/2
 Ikcc2_E=2;        % KCC2 max current
 kCL_E=100;        % CL conversion factor, 1000 cm^3
@@ -39,6 +40,12 @@ kNa_E=10;         % NA conversion, 1000 cm^3
 % single cell and membrane parameters
 Cm_E=0.75;         % mu F/cm^2
 e0_E=26.6393;      % kT/F, in Nernst equation
+
+Temp=23+273.15;      % real temperature correction
+R=8.314;
+F=96485.332;
+
+
 kappa_E=10000;     % conductance between compartments, Ohm
 S_Soma_E=0.000001; % cm^2
 S_Dend_E=0.000165; % cm^2
@@ -73,7 +80,7 @@ koff_E=0.0008;    % 1/ mM / ms
 K1n_E=1.0;        % 1/ mM
 Bmax_E=500;       % mM
 % KCC2 norm
-HCO3o=26;       % mM
+HCO3o=80;       % mM
 %HCO3i=16;       % mM
 
 ts=1;            % stimulation starts always at first ms!
@@ -179,7 +186,7 @@ for i=1:1:round(T/dt)
  % CL
  VCL=e0_E*log(Cli/Clo_E);
  % VGABA
- VGABA(i)=e0_E*log((4*Cli+HCO3i)./(4*Clo_E+HCO3o)); 
+ VGABA(i)=(R*Temp/F)*log((4*Cli+3*HCO3i)./(4*Clo_E+3*HCO3o))*1000; % VGABA CHANGED!!!
  
  % dendrite current
  f_NMDA=1/(1+Mg/3.57*exp(-0.062*VD(i)));
@@ -322,3 +329,18 @@ display('Area under the curve in V/s')
 trapz(V_after_stim-V_last)*dt
 
 toc
+
+%% Plot only the voltage
+
+figure
+
+plot(t(1:end-1),VSOMA);
+set(gca,'FontSize',20);             % set the axis with big font
+title(sprintf('[Cli_i]^- [HCO3i_i]^-'));
+xlabel('Time (ms)');
+ylabel('V_{Soma} (mV)');
+box off
+xlim([0 2000])
+
+
+%%

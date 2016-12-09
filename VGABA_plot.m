@@ -1,19 +1,27 @@
-Cli=1:1:20;
+%%
+
+Cli=1:1:30;
 HCO3i=1:1:30;
 
-VGABA=zeros(max(Cli),max(HCO3i));
+VGABA=zeros(length(Cli),length(HCO3i));
 
-e0_E=26.6393;   % kT/F, in Nernst equation
-HCO3o=26;       % mM
-Clo_E=130;      % mM
+e0_E=26.6393;   % RT/F, in Nernst equation
+
+T=23+273.15;    
+R=8.314;
+F=96485.332;
 
 
-for i=1:1:max(Cli)
-    for j=1:1:max(HCO3i)
-   VGABA(i,j)=e0_E*log((4*Cli(i)+HCO3i(j))./(4*Clo_E+HCO3o));
+HCO3o=80;       % mM 26
+Clo_E=250;      % mM 130
+
+
+for i=1:1:length(Cli)
+    for j=1:1:length(HCO3i)
+    VGABA(i,j)=(R*T/F)*log((4*Cli(i)+3*HCO3i(j))./(4*Clo_E+3*HCO3o))*1000;  % to get mV
     end
 end
-
+%%
 
 %%
 figure
@@ -26,6 +34,20 @@ set(gca,'YDir','normal');
 box off
 colormap('jet');
 colorbar;
+
+% scale the colormap
+cmin=-120;
+cmax=-40;
+%caxis([cmin cmax]);
+
+%%
+
+%% Check VGABA difference in the key points
+
+VGABA(8,30) -VGABA(14,15)
+
+%%
+
 
 %% VGABA and the number of spikes
 

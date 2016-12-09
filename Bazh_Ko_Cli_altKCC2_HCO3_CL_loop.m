@@ -35,7 +35,7 @@ V_last=0;
         
 
 %% NUMERICAL PARAMETERS
-T=60000;        % total time, mS
+T=20000;        % total time, mS 60000
 Tst=200;      % duration of stimulation, ms
 dt=0.05;         % time step, ms
 t=(0:1:round(T/dt))*dt;
@@ -53,7 +53,7 @@ Cli=p*dCli;          % mM
 
 Mg=1;
 % CL
-Clo_E=130;        % mM
+Clo_E=250;        % mM
 Vhalf_E=40;       % KCC2 1/2
 Ikcc2_E=2;        % KCC2 max current
 kCL_E=100;        % CL conversion factor, 1000 cm^3
@@ -102,7 +102,7 @@ koff_E=0.0008;    % 1/ mM / ms
 K1n_E=1.0;        % 1/ mM
 Bmax_E=500;       % mM
 % KCC2 norm
-HCO3o=26;       % mM
+HCO3o=80;       % mM
 %HCO3i=16;       % mM
 
 
@@ -208,7 +208,7 @@ for i=1:1:round(T/dt)
  % CL
  VCL=e0_E*log(Cli/Clo_E);
  % VGABA
- VGABA(i)=e0_E*log((4*Cli+HCO3i)./(4*Clo_E+HCO3o)); 
+ VGABA(i)=e0_E*log((4*Cli+3*HCO3i)./(4*Clo_E+3*HCO3o)); 
  
  % dendrite current
  f_NMDA=1/(1+Mg/3.57*exp(-0.062*VD(i)));
