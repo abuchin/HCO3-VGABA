@@ -7,7 +7,7 @@ tic
 
 %% NUMERICAL PARAMETERS
 
-T=10000;        % total time, mS
+T=60000;        % total time, mS
 Tst=200;      % duration of stimulation, ms
 dt=0.05;         % time step, ms
 t=(0:1:round(T/dt))*dt;
@@ -19,9 +19,9 @@ Hz_stim=100;  % stimulation intensity
 %% PY parameters
 
 % Variation parameters - PARAMETERS CHANGED!
-Cli=14;          % mM
-HCO3i=15;        % mM
-stimulation_gain=2;
+Cli=8;          % mM
+HCO3i=30;        % mM
+stimulation_gain=1;
 
 Mg=1;
 % CL
@@ -46,6 +46,8 @@ R=8.314;
 F=96485.332;
 alpha_beta=0.85;
 V_shift=-24;
+
+
 
 kappa_E=10000;     % conductance between compartments, Ohm
 S_Soma_E=0.000001; % cm^2
@@ -270,7 +272,7 @@ h_iHVA(i+1) = (-(h_iHVA(i)-infHVAh)/tauHVAh)*dt + h_iHVA(i);
 m_iKm(i+1) = (-(m_iKm(i)-infKmm)/tauKmm)*dt + m_iKm(i);
 
 % ION CONCENTRATION
-Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia ))*dt + Ko(i);
+Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia )*dt + Ko(i);
 % -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)
 Bs(i+1)=(koff_E*(Bmax_E-Bs(i)) -kon*Bs(i)*Ko(i))*dt + Bs(i);
 %Cli(i+1)=kCL_E/F*(ICL +Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) )*dt + Cli(i);
