@@ -4,14 +4,14 @@
 Cli=8;          % mM
 HCO3i=30;        % mM
 
-HCO3o=80;        % mM 6
-Clo_E=250;       % mM 130
+HCO3o=26;        % mM 6
+Clo_E=150;       % mM 130
 
 Temp=23+273.15;      % real temperature correction
 R=8.314;
 F=96485.332;
 
-VGABA=(R*Temp/F)*log((4*Cli+1*HCO3i)./(4*Clo_E+1*HCO3o))*1000
+%VGABA=(R*Temp/F)*log((4*Cli+1*HCO3i)./(4*Clo_E+1*HCO3o))*1000
 
 %%
 

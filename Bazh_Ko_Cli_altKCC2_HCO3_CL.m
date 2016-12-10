@@ -7,7 +7,7 @@ tic
 
 %% NUMERICAL PARAMETERS
 
-T=60000;        % total time, mS
+T=10000;        % total time, mS
 Tst=200;      % duration of stimulation, ms
 dt=0.05;         % time step, ms
 t=(0:1:round(T/dt))*dt;
@@ -19,13 +19,13 @@ Hz_stim=100;  % stimulation intensity
 %% PY parameters
 
 % Variation parameters - PARAMETERS CHANGED!
-Cli=14;          % mM
-HCO3i=15;        % mM
+Cli=8;          % mM
+HCO3i=30;        % mM
 stimulation_gain=1;
 
 Mg=1;
 % CL
-Clo_E=250;        % mM
+Clo_E=150;        % mM
 Vhalf_E=40;       % KCC2 1/2
 Ikcc2_E=2;        % KCC2 max current
 kCL_E=100;        % CL conversion factor, 1000 cm^3
@@ -41,9 +41,12 @@ kNa_E=10;         % NA conversion, 1000 cm^3
 Cm_E=0.75;         % mu F/cm^2
 e0_E=26.6393;      % kT/F, in Nernst equation
 
-Temp=23+273.15;      % real temperature correction
+Temp=30+273.15;      % real temperature correction
 R=8.314;
 F=96485.332;
+alpha_beta=0.85;
+V_shift=-24;
+
 
 
 kappa_E=10000;     % conductance between compartments, Ohm
@@ -80,7 +83,7 @@ koff_E=0.0008;    % 1/ mM / ms
 K1n_E=1.0;        % 1/ mM
 Bmax_E=500;       % mM
 % KCC2 norm
-HCO3o=80;       % mM
+HCO3o=26;       % mM
 %HCO3i=16;       % mM
 
 ts=1;            % stimulation starts always at first ms!
@@ -186,7 +189,7 @@ for i=1:1:round(T/dt)
  % CL
  VCL=e0_E*log(Cli/Clo_E);
  % VGABA
- VGABA(i)=(R*Temp/F)*log((4*Cli+3*HCO3i)./(4*Clo_E+3*HCO3o))*1000; % VGABA CHANGED!!!
+ VGABA(i)=V_shift+(R*Temp/F)*log((Cli+alpha_beta*HCO3i)./(Clo_E+alpha_beta*HCO3o))*1000; % VGABA CHANGED!!!
  
  % dendrite current
  f_NMDA=1/(1+Mg/3.57*exp(-0.062*VD(i)));
