@@ -5,8 +5,8 @@ close all
 % do we need Cli leak currents here? we do not have them for HCO3
 
 % max
-Cli_max=35;
-HCO3_max=35;
+Cli_max=30;
+HCO3_max=30;
 
 % variations
 dCli=1;     % mM
@@ -19,6 +19,7 @@ Cli=0;      % mM
 % set up the initial matrix
 VS=zeros(Cli_max/dCli,HCO3_max/dHCO3);
 
+% axis for the concentrations
 X=(1:1:round(Cli_max/dCli))*dCli;
 Y=(1:1:round(HCO3_max/dHCO3))*dHCO3;
 
@@ -34,8 +35,8 @@ V_last=0;
         
 
 %% NUMERICAL PARAMETERS
-T=90000;        % total time, mS
-Tst=500;      % duration of stimulation, ms
+T=20000;        % total time, mS 60000
+Tst=200;      % duration of stimulation, ms
 dt=0.05;         % time step, ms
 t=(0:1:round(T/dt))*dt;
 
@@ -52,12 +53,12 @@ Cli=p*dCli;          % mM
 
 Mg=1;
 % CL
-Clo_E=130;        % mM
+Clo_E=250;        % mM
 Vhalf_E=40;       % KCC2 1/2
 Ikcc2_E=2;        % KCC2 max current
 kCL_E=100;        % CL conversion factor, 1000 cm^3
 % K
-Ki_E=150;         % intra K, mM
+Ki_E=130;         % intra K, mM
 kK_E=10;          % K conversion factor, 1000 cm^3
 d_E=0.15;         % ratio Volume/surface, mu m
 % NA
@@ -80,29 +81,30 @@ gg_kl_E=0.042;     % K leak, mS/cm^2
 gg_Nal_E=0.0198;   % Na leak, mS/cm^2
 Vbolz_E=22;        % mV
 % dendritic
-G_NaD_E=1.1;       % mS/cm^2
-G_NapD_E=3.5;      % mS/cm^2
-G_HVA_E=0.0195;    % mS/cm^2
-G_kl_E=0.044;      % K leak, mS/cm^2
-G_lD_E=0.00;       % Clleak, mS/cm^2       % no Cl leak
+G_NaD_E=0;       % mS/cm^2 
+G_NapD_E=0;      % mS/cm^2
+G_HVA_E=0;    % mS/cm^2
+G_kl_E=0.037;      % K leak, mS/cm^2
+G_lD_E=0.00;       % Clleak, mS/cm^2        % leak changed
 G_Nal_E=0.02;      % Na leak, mS/cm^2
 E_Ca_E=140;        % mV
 TauCa_E=300;       % ms
 DCa_E=0.85;        % ???
-G_KCa_E=2.5;       % mS/cm^2
-G_Km_E=0.01;       % mS/cm^2
+G_KCa_E=0;       % mS/cm^2
+G_Km_E=0;       % mS/cm^2
 % Pump parametes and glial buffer
 Koalpha_E=3.5;    % mM
 Naialpha_E=20;    % mM
-Imaxsoma_E=25;    % muA/cm^2
-Imaxdend_E=25;    % muA/cm^2
+Imaxsoma_E=25;    % muA/cm^2  25
+Imaxdend_E=25;    % muA/cm^2  25
 Kothsoma_E=15;    % mM
 koff_E=0.0008;    % 1/ mM / ms
 K1n_E=1.0;        % 1/ mM
 Bmax_E=500;       % mM
 % KCC2 norm
-HCO3o=26;       % mM
+HCO3o=80;       % mM
 %HCO3i=16;       % mM
+
 
 ts=1;            % stimulation starts always at first second!
 
@@ -135,30 +137,30 @@ alpha2_NMDA=0.05;         % kHz
 VNMDA=10;                 % mV
 
 
-gGABA_max=stimulation_gain*2;          % mS/cm^2, estimated from Chizhov 2
-gAMPA_max=stimulation_gain*3;          % mS/cm^2, estimated from Chizhov 3
-gNMDA_max=stimulation_gain*2;          % mS/cm^2
+gGABA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 0.5
+gAMPA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 0.5
+gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 
 
 %% INITIAL CONDITIONS (rest state, KCC2(+))
 
-Ko=3.45;             % mM
+Ko=3.46;             % mM
 %Cli=3.46;            % mM
 cai=0.00;            % mM
 Bs=499.92;           % mM
-VD=-65.43;           % mV
-VSOMA=-65.51;        % mV
-VGABA=-58.82;           % mV
+VD=-59.04;           % mV
+VSOMA=-59.07;        % mV
+VGABA=-77.43;           % mV
 m_iKv=0.00;       % 1
-m_iNa=0.01;       % 1
-h_iNa=0.84;       % 1
-m_iKm=0.01;       % 1
-m_iNaD=0.01;      % 1
-h_iNaD=0.84;      % 1
+m_iNa=0.03;       % 1
+h_iNa=0.65;       % 1
+m_iKm=0.03;       % 1
+m_iNaD=0.03;      % 1
+h_iNaD=0.65;      % 1
 m_iNapD=0.00;     % 1
 m_iKCa=0.00;      % 1
 m_iHVA=0.00;      % 1
-h_iHVA=0.58;      % 1
+h_iHVA=0.50;      % 1
 
 %% loop over time
 for i=1:1:round(T/dt)     
@@ -206,7 +208,7 @@ for i=1:1:round(T/dt)
  % CL
  VCL=e0_E*log(Cli/Clo_E);
  % VGABA
- VGABA(i)=e0_E*log((4*Cli+HCO3i)./(4*Clo_E+HCO3o)); 
+ VGABA(i)=e0_E*log((4*Cli+3*HCO3i)./(4*Clo_E+3*HCO3o)); 
  
  % dendrite current
  f_NMDA=1/(1+Mg/3.57*exp(-0.062*VD(i)));
@@ -332,7 +334,7 @@ ylabel('Ko, mM');
 %% Calculate the area under the curve
 
 % voltage after stimulation
-V_after_stim=VSOMA((Tst+500)/dt:end);
+V_after_stim=VSOMA((Tst+50)/dt:end);
 
 % constant line for the reference
 V_last(1:length(V_after_stim))=VSOMA(end);
@@ -350,8 +352,12 @@ display('Area under the curve in V/s')
 %}
 
 % save the simulation output
-VS(k,p)=trapz(V_after_stim - V_last)*dt;
 
+% area under the curve
+%VS(k,p)=trapz(V_after_stim - V_last)*dt;
+
+% number of spikes after the stimulation
+VS(k,p)=length(spike_times(V_after_stim,0.4));
 
     end
 end
@@ -361,7 +367,7 @@ figure;
 
 imagesc(X,Y,VS);
 set(gca,'YDir','normal');
-title('Area under the curve (V/s)');
+title('Number of spikes after stimulation');
 colorbar;
 box off;
 

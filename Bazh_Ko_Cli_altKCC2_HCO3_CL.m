@@ -7,24 +7,25 @@ tic
 
 %% NUMERICAL PARAMETERS
 
-T=60000;        % total time, mS
+T=10000;        % total time, mS
 Tst=200;      % duration of stimulation, ms
 dt=0.05;         % time step, ms
 t=(0:1:round(T/dt))*dt;
 
 %% Stimulus parameters
 Hz_stim=100;  % stimulation intensity
+%
 
 %% PY parameters
 
 % Variation parameters - PARAMETERS CHANGED!
-HCO3i=30;        % mM
-Cli=30;          % mM
-stimulation_gain=1;
+Cli=14;          % mM
+HCO3i=15;        % mM
+stimulation_gain=2;
 
 Mg=1;
 % CL
-Clo_E=130;        % mM
+Clo_E=150;        % mM
 Vhalf_E=40;       % KCC2 1/2
 Ikcc2_E=2;        % KCC2 max current
 kCL_E=100;        % CL conversion factor, 1000 cm^3
@@ -39,6 +40,13 @@ kNa_E=10;         % NA conversion, 1000 cm^3
 % single cell and membrane parameters
 Cm_E=0.75;         % mu F/cm^2
 e0_E=26.6393;      % kT/F, in Nernst equation
+
+Temp=30+273.15;      % real temperature correction
+R=8.314;
+F=96485.332;
+alpha_beta=0.85;
+V_shift=-24;
+
 kappa_E=10000;     % conductance between compartments, Ohm
 S_Soma_E=0.000001; % cm^2
 S_Dend_E=0.000165; % cm^2
@@ -108,9 +116,9 @@ alpha2_NMDA=0.05;         % kHz
 VNMDA=10;                 % mV
 
 
-gGABA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 2
-gAMPA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 3
-gNMDA_max=stimulation_gain*0.1;          % mS/cm^2
+gGABA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 0.5
+gAMPA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 0.5
+gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 
 
 % I=0;            % external input for VSOMA ~ -64 mV
@@ -179,7 +187,7 @@ for i=1:1:round(T/dt)
  % CL
  VCL=e0_E*log(Cli/Clo_E);
  % VGABA
- VGABA(i)=e0_E*log((4*Cli+HCO3i)./(4*Clo_E+HCO3o)); 
+ VGABA(i)=V_shift+(R*Temp/F)*log((Cli+alpha_beta*HCO3i)./(Clo_E+alpha_beta*HCO3o))*1000; % VGABA CHANGED!!!
  
  % dendrite current
  f_NMDA=1/(1+Mg/3.57*exp(-0.062*VD(i)));
@@ -262,7 +270,7 @@ h_iHVA(i+1) = (-(h_iHVA(i)-infHVAh)/tauHVAh)*dt + h_iHVA(i);
 m_iKm(i+1) = (-(m_iKm(i)-infKmm)/tauKmm)*dt + m_iKm(i);
 
 % ION CONCENTRATION
-Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump ) +Glia )*dt + Ko(i);
+Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia ))*dt + Ko(i);
 % -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)
 Bs(i+1)=(koff_E*(Bmax_E-Bs(i)) -kon*Bs(i)*Ko(i))*dt + Bs(i);
 %Cli(i+1)=kCL_E/F*(ICL +Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) )*dt + Cli(i);
@@ -322,3 +330,18 @@ display('Area under the curve in V/s')
 trapz(V_after_stim-V_last)*dt
 
 toc
+
+%% Plot only the voltage
+
+figure
+
+plot(t(1:end-1),VSOMA);
+set(gca,'FontSize',20);             % set the axis with big font
+title(sprintf('[Cli_i]^- [HCO3i_i]^-'));
+xlabel('Time (ms)');
+ylabel('V_{Soma} (mV)');
+box off
+xlim([0 10000])
+
+
+%%
