@@ -7,7 +7,7 @@ tic
 
 %% NUMERICAL PARAMETERS
 
-T=10000;        % total time, mS
+T=60000;        % total time, mS
 Tst=200;      % duration of stimulation, ms
 dt=0.05;         % time step, ms
 t=(0:1:round(T/dt))*dt;
@@ -19,15 +19,15 @@ Hz_stim=100;  % stimulation intensity
 %% PY parameters
 
 % Variation parameters - PARAMETERS CHANGED!
-Cli=14;          % mM
-HCO3i=15;        % mM
+Cli=4;          % mM
+HCO3i=30;        % mM
 stimulation_gain=2;
 
 Mg=1;
 % CL
-Clo_E=150;        % mM
+Clo_E=124.8;        % mM
 Vhalf_E=40;       % KCC2 1/2
-Ikcc2_E=2;        % KCC2 max current
+Ikcc2_E=0.1;        % KCC2 max current
 kCL_E=100;        % CL conversion factor, 1000 cm^3
 % K
 Ki_E=130;         % intra K, mM
@@ -39,19 +39,20 @@ Nai_E=20;         % intra Na, mM
 kNa_E=10;         % NA conversion, 1000 cm^3
 % single cell and membrane parameters
 Cm_E=0.75;         % mu F/cm^2
-e0_E=26.6393;      % kT/F, in Nernst equation
 
-Temp=30+273.15;      % real temperature correction
-R=8.314;
-F=96485.332;
-alpha_beta=0.85;
-V_shift=-24;
+
+Temp=310;          % real temperature, correction
+R=8.3;
+F=96000;
+P_Cl_HCO3=0.2;
+
+e0_E=R*Temp/F*1000;      % RT/F, rescale all reversal potentials
 
 kappa_E=10000;     % conductance between compartments, Ohm
 S_Soma_E=0.000001; % cm^2
 S_Dend_E=0.000165; % cm^2
 % constants
-F=96489;        % coul/M
+F=96000;        % coul/M
 % Conductances
 % somatic
 G_Na_E=3450.0;     % Na, mS/cm^2
@@ -81,7 +82,7 @@ koff_E=0.0008;    % 1/ mM / ms
 K1n_E=1.0;        % 1/ mM
 Bmax_E=500;       % mM
 % KCC2 norm
-HCO3o=26;       % mM
+HCO3o=25;       % mM
 %HCO3i=16;       % mM
 
 ts=1;            % stimulation starts always at first ms!
@@ -122,6 +123,7 @@ gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 
 
 % I=0;            % external input for VSOMA ~ -64 mV
+
 %% INITIAL CONDITIONS (rest state, KCC2(+))
 Ko=3.46;             % mM
 %Cli=3.46;            % mM
@@ -185,9 +187,9 @@ for i=1:1:round(T/dt)
  % NA
  VNAe=e0_E*log(Nao_E/Nai_E); 
  % CL
- VCL=e0_E*log(Cli/Clo_E);
+ VCL=e0_E*log(Cli(i)/Clo_E);
  % VGABA
- VGABA(i)=V_shift+(R*Temp/F)*log((Cli+alpha_beta*HCO3i)./(Clo_E+alpha_beta*HCO3o))*1000; % VGABA CHANGED!!!
+ VGABA(i)=(R*Temp/F)*log((Cli(i)+P_Cl_HCO3*HCO3i)./(Clo_E+P_Cl_HCO3*HCO3o))*1000; % VGABA CHANGED!!!
  
  % dendrite current
  f_NMDA=1/(1+Mg/3.57*exp(-0.062*VD(i)));
@@ -270,10 +272,10 @@ h_iHVA(i+1) = (-(h_iHVA(i)-infHVAh)/tauHVAh)*dt + h_iHVA(i);
 m_iKm(i+1) = (-(m_iKm(i)-infKmm)/tauKmm)*dt + m_iKm(i);
 
 % ION CONCENTRATION
-Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia ))*dt + Ko(i);
+Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)))*dt + Ko(i);
 % -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)
 Bs(i+1)=(koff_E*(Bmax_E-Bs(i)) -kon*Bs(i)*Ko(i))*dt + Bs(i);
-%Cli(i+1)=kCL_E/F*(ICL +Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) )*dt + Cli(i);
+Cli(i+1)=kCL_E/F*(ICL +Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) )*dt + Cli(i);
 cai(i+1)=(-5.1819e-5* 2.9529*G_HVA_E*m_iHVA(i)^2*h_iHVA(i) * (VD(i) - E_Ca_E)/DCa_E + (0.00024-cai(i))/TauCa_E)*dt + cai(i);     
  
 end

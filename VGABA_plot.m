@@ -15,7 +15,7 @@ HCO3o=26;       % mM 26
 Clo_E=150;      % mM 130
 
 alpha_beta=0.85;
-V_shift=-24;
+V_shift=0;
 
 for i=1:1:length(Cli)
     for j=1:1:length(HCO3i)
