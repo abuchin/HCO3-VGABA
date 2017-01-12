@@ -20,11 +20,11 @@ Hz_stim=100;  % stimulation intensity
 
 % Variation parameters - PARAMETERS CHANGED!
 Cli_init=4;          % mM
-corr=0.33;         % correction term for Cli
-HCO3i=30;            % mM
+HCO3i=15;
 
-% pipete conductance
-g_pipete=10;
+%NKCC1
+Inkcc1=0.8;         % NKCC1 model
+Vhalf_NKCC=40;
 
 stimulation_gain=2;
 
@@ -51,7 +51,7 @@ R=8.3;
 F=96000;
 P_Cl_HCO3=0.2;
 
-e0_E=R*Temp/F*1000;      % RT/F, rescale all reversal potentials
+e0_E=R*Temp/F*1000;      % RT/F, rescale all reversal potentials!
 
 kappa_E=10000;     % conductance between compartments, Ohm
 S_Soma_E=0.000001; % cm^2
@@ -195,7 +195,10 @@ for i=1:1:round(T/dt)
  VCL=e0_E*log(Cli(i)/Clo_E);
  % VGABA
  VGABA(i)=(R*Temp/F)*log((Cli(i)+P_Cl_HCO3*HCO3i)./(Clo_E+P_Cl_HCO3*HCO3o))*1000; % VGABA CHANGED!!!
+ % VNKCC1
+ V_NKCC1=(VKe+VNAe)/2;
  
+
  % dendrite current
  f_NMDA=1/(1+Mg/3.57*exp(-0.062*VD(i)));
  iDendrite= -gNMDA_max*gNMDA_ext(i)*f_NMDA*(VD(i)-VNMDA) -gGABA_max*gGABA_ext(i)*(VD(i)-VGABA(i)) -gAMPA_max.*gAMPA_ext(i)*(VD(i)-V_AMPA) -G_lD_E*(VD(i)-VCL) -G_kl_E*(VD(i)-VKe) -G_Nal_E*(VD(i)-VNAe) -2.9529*G_NaD_E*m_iNaD(i)^3*h_iNaD(i)*(VD(i)-VNAe) -G_NapD_E*m_iNapD(i)*(VD(i)-VNAe) -G_KCa_E*m_iKCa(i)^2*(VD(i) - VKe) -2.9529*G_Km_E*m_iKm(i)*(VD(i) - VKe) -2.9529*G_HVA_E*m_iHVA(i)^2*h_iHVA(i)*(VD(i)-E_Ca_E) -INapump -Ikpump;
@@ -256,7 +259,7 @@ infHVAm = am_iHVA/(am_iHVA+bm_iHVA);
  infKmm = am_iKm/(am_iKm+bm_iKm);
 
 % ION CURRENTS
-ICL = G_lD_E*(VD(i)-VCL) +gGABA_max*gGABA_ext(i)*(VD(i)-VGABA(i)) +corr*Cli_init;
+ICL = G_lD_E*(VD(i)-VCL) +gGABA_max*gGABA_ext(i)*(VD(i)-VGABA(i));
 IK = gg_kl_E*(VSOMA(i)-VKe) +G_kl_E*(VD(i)-VKe) +G_KCa_E*m_iKCa(i)*m_iKCa(i)*(VD(i)-VKe) +2.9529*G_Km_E*m_iKm(i)*(VD(i)-VKe) +(2.9529*G_Kv_E*m_iKv(i)*(VSOMA(i)-VKe))/200;
 
 % GLIA
@@ -277,10 +280,10 @@ h_iHVA(i+1) = (-(h_iHVA(i)-infHVAh)/tauHVAh)*dt + h_iHVA(i);
 m_iKm(i+1) = (-(m_iKm(i)-infKmm)/tauKmm)*dt + m_iKm(i);
 
 % ION CONCENTRATION
-Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)))*dt + Ko(i);
+Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)) )*dt + Ko(i);
 % -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)
 Bs(i+1)=(koff_E*(Bmax_E-Bs(i)) -kon*Bs(i)*Ko(i))*dt + Bs(i);
-Cli(i+1)=kCL_E/F*(ICL + Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) )*dt + Cli(i);
+Cli(i+1)=kCL_E/F*(ICL + Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) +Inkcc1*(V_NKCC1-VCL)/((V_NKCC1-VCL)+Vhalf_NKCC))*dt + Cli(i);
 cai(i+1)=(-5.1819e-5* 2.9529*G_HVA_E*m_iHVA(i)^2*h_iHVA(i) * (VD(i) - E_Ca_E)/DCa_E + (0.00024-cai(i))/TauCa_E)*dt + cai(i);     
  
 end
@@ -319,6 +322,7 @@ ylabel('Ko, mM');
 
 %% Plot the area under the curve
 
+%{
 % voltage after stimulation, to make sure it is the effect of K
 V_after_stim=VSOMA((Tst+50)/dt:end);
 
@@ -337,6 +341,7 @@ display('Area under the curve in V/s')
 trapz(V_after_stim-V_last)*dt
 
 toc
+%}
 
 %% Plot only the voltage
 
