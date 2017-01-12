@@ -19,15 +19,20 @@ Hz_stim=100;  % stimulation intensity
 %% PY parameters
 
 % Variation parameters - PARAMETERS CHANGED!
-Cli=4;          % mM
-HCO3i=30;        % mM
+Cli_init=4;          % mM
+corr=0.33;         % correction term for Cli
+HCO3i=30;            % mM
+
+% pipete conductance
+g_pipete=10;
+
 stimulation_gain=2;
 
 Mg=1;
 % CL
 Clo_E=124.8;        % mM
-Vhalf_E=40;       % KCC2 1/2
-Ikcc2_E=0.1;        % KCC2 max current
+Vhalf_E=40;       % KCC2 1/2, was 40 
+Ikcc2_E=0.2;        % KCC2 max current
 kCL_E=100;        % CL conversion factor, 1000 cm^3
 % K
 Ki_E=130;         % intra K, mM
@@ -126,7 +131,7 @@ gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 
 %% INITIAL CONDITIONS (rest state, KCC2(+))
 Ko=3.46;             % mM
-%Cli=3.46;            % mM
+Cli=3.46;            % mM
 cai=0.00;            % mM
 Bs=499.92;           % mM
 VD=-59.04;           % mV
@@ -251,7 +256,7 @@ infHVAm = am_iHVA/(am_iHVA+bm_iHVA);
  infKmm = am_iKm/(am_iKm+bm_iKm);
 
 % ION CURRENTS
-ICL = G_lD_E*(VD(i)-VCL) +gGABA_max*gGABA_ext(i)*(VD(i)-VGABA(i));
+ICL = G_lD_E*(VD(i)-VCL) +gGABA_max*gGABA_ext(i)*(VD(i)-VGABA(i)) +corr*Cli_init;
 IK = gg_kl_E*(VSOMA(i)-VKe) +G_kl_E*(VD(i)-VKe) +G_KCa_E*m_iKCa(i)*m_iKCa(i)*(VD(i)-VKe) +2.9529*G_Km_E*m_iKm(i)*(VD(i)-VKe) +(2.9529*G_Kv_E*m_iKv(i)*(VSOMA(i)-VKe))/200;
 
 % GLIA
@@ -275,7 +280,7 @@ m_iKm(i+1) = (-(m_iKm(i)-infKmm)/tauKmm)*dt + m_iKm(i);
 Ko(i+1)=(kK_E/F/d_E*(IK +Ikpump +Ikpump +Glia -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)))*dt + Ko(i);
 % -Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E)
 Bs(i+1)=(koff_E*(Bmax_E-Bs(i)) -kon*Bs(i)*Ko(i))*dt + Bs(i);
-Cli(i+1)=kCL_E/F*(ICL +Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) )*dt + Cli(i);
+Cli(i+1)=kCL_E/F*(ICL + Ikcc2_E*(VKe-VCL)/((VKe-VCL)+Vhalf_E) )*dt + Cli(i);
 cai(i+1)=(-5.1819e-5* 2.9529*G_HVA_E*m_iHVA(i)^2*h_iHVA(i) * (VD(i) - E_Ca_E)/DCa_E + (0.00024-cai(i))/TauCa_E)*dt + cai(i);     
  
 end
