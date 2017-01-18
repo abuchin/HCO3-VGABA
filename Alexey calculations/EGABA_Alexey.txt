@@ -1,0 +1,21 @@
+Dear Anatoly and Boris
+
+I think the EGABA is solved.
+
+Please find attached file. 
+At page 1 I have calculated GHK equation with relative permeability for HCO3- = 0.2 (Bormann et al., 1987; Kaila and Voipio, 1987)
+
+for Cl- 8/HCO3- 30 EGABA=-59.6 mV
+for Cl- 14/HCO3- 15 EGABA=-54.4 mV
+
+So I do not know why Anatoly's result is different.
+
+Then I read the method section and found that we used solutions which give different  Cl- and HCO3- values that at the figures! And got the following:
+Cl- 4/HCO3- 30 EGABA=-68.7 mV
+Cl- 10/HCO3- 15 EGABA=-61.7 mV
+
+Then, I looked at the main text and found that recorded values were 68.6 mV and 63.3 mV. Quite close.
+
+I think it is sorted.
+
+Let me get the original traces too.
