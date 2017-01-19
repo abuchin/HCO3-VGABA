@@ -20,10 +20,10 @@ Hz_stim=100;  % stimulation intensity
 
 % Variation parameters - PARAMETERS CHANGED!
 Cli_init=4;          % mM
-HCO3i=15;
+HCO3i=30;
 
 % AE3 parameter
-Imax_AE3=0.05;
+Imax_AE3=0;
 V_half_AE3=20;     % value when AE3 reached its maximal value (to be checked)
 
 stimulation_gain=4;
@@ -122,7 +122,7 @@ alpha2_NMDA=0.05;         % kHz
 VNMDA=10;                 % mV
 
 
-gGABA_max=stimulation_gain*1;          % mS/cm^2, estimated from Chizhov 0.5
+gGABA_max=stimulation_gain*3;          % mS/cm^2, estimated from Chizhov 0.5
 gAMPA_max=stimulation_gain*0.5;          % mS/cm^2, estimated from Chizhov 0.5
 gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 
@@ -130,23 +130,26 @@ gNMDA_max=stimulation_gain*0.1;          % mS/cm^2 0.1
 % I=0;            % external input for VSOMA ~ -64 mV
 
 %% INITIAL CONDITIONS (rest state, KCC2(+))
-Ko=3.81;             % mM
-Cli=10.19;           % mM
+Ko=3.47;             % mM
+Cli=3.33;            % mM
 cai=0.00;            % mM
-Bs=499.88;           % mM
-VD=-58.72;           % mV
-VSOMA=-58.72;        % mV
-VGABA=-61.26;        % mV
-m_iKv=0.0013;     % 1
-m_iNa=0.033;      % 1
-h_iNa=0.64;       % 1
+Bs=499.92;           % mM
+VD=-59.45;           % mV
+VSOMA=-59.49;        % mV
+VGABA=-70;           % mV
+m_iKv=0.0013;       % 1
+m_iNa=0.03;       % 1
+h_iNa=0.67;       % 1
 m_iKm=0.03;       % 1
 m_iNaD=0.03;      % 1
-h_iNaD=0.64;      % 1
+h_iNaD=0.67;      % 1
 m_iNapD=0.00;     % 1
 m_iKCa=0.00;      % 1
 m_iHVA=0.00;      % 1
-h_iHVA=0.50;      % 1
+h_iHVA=0.51;      % 1
+
+%%
+
 
 %% loop over time
 for i=1:1:round(T/dt)     
@@ -299,7 +302,7 @@ figure;
 subplot(3,1,1);
 plot(t(1:end-1),VSOMA);
 set(gca,'FontSize',20);             % set the axis with big font
-title(sprintf('Bazh NORM KCC2 case 2'));
+title(sprintf('Bazh NORM KCC2 case 1'));
 xlabel('time, ms');
 ylabel('V_{S}, mV');
 
@@ -349,7 +352,7 @@ figure
 
 plot(t(1:end-1),VSOMA);
 set(gca,'FontSize',20);             % set the axis with big font
-title(sprintf('[Cli_i]^- [HCO3i_i]^- case 2'));
+title(sprintf('[Cli_i]^- [HCO3i_i]^- case 1'));
 xlabel('Time (ms)');
 ylabel('V_{Soma} (mV)');
 box off
